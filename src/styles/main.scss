@@ -1,0 +1,26 @@
+html {
+  height: 100vh;
+
+  & * {
+    margin    : 0;
+    padding   : 0;
+    box-sizing: border-box;
+  }
+}
+
+body {
+  height         : 100%;
+  display        : flex;
+  justify-content: center;
+  align-items    : center;
+
+  .city-picker {
+    padding      : 30px;
+    border       : 1px solid black;
+    border-radius: 10px;
+
+    &__selector {
+      padding: 5px 10px;
+    }
+  }
+}
