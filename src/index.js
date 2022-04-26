@@ -1,29 +1,66 @@
-import { $dataMetaSchema } from 'ajv';
 import './styles/main.scss';
+
+class JSONPGetter {
+  constructor(options) {
+    this.onLoad = options.onLoad || function (data) { console.log(data) };
+    this.onError = options.onError || function (err) { console.log(err) };
+    this.timeoutLimit = options.timeoutLimit || 5;
+    this.callbackName = options.callbackName || 'callback';
+    this.activeScript = null;
+    this.activeTimeout = null;
+  }
+
+  #createNewRequest(request) {
+    this.activeScript = document.createElement('script');
+
+    this.activeScript.type = 'text/javascript';
+    this.activeScript.async = true;
+    this.activeScript.src = request;
+    document.head.appendChild(this.activeScript);
+  }
+
+  #requestTimeoutHandler() {
+    this.activeTimeout = setTimeout(() => {
+      window[this.callbackName || 'callback'] = function () { };
+      this.onError()
+    }, this.timeoutLimit * 1000);
+  }
+
+  sendRequest(body) {
+    this.#requestTimeoutHandler();
+
+    window[this.callbackName || 'callback'] = (data) => {
+      clearTimeout(this.activeTimeout);
+      this.onLoad(data);
+    };
+
+    this.#createNewRequest(body);
+  }
+}
 
 class CityPicker {
   constructor() {
     this.inputField = document.getElementById('city-input');
     this.state = {
       fieldValue: '',
-      citiesList: this.fetchCitiesList(),
+      citiesList: [],
     };
+
+    this.#createFetcher();
   }
 
-  async fetchCitiesList() {
-    const response = await fetch('https://kladr-api.ru/api.php?query=Арх&contentType=city&withParent=1&limit=2', {
-      mode: 'cors',
-      method: 'GET',
-      headers: {
-        'Access-Control-Allow-Origin': '*'
-      }
-    })
-      .then(res => res.json())
-      .then(data => data)
-      .catch(err => { console.log(err) })
+  #createFetcher() {
+    const options = {
+      onLoad: function (data) {
+        console.log(data);
+      },
+      onError: function () {
+        console.log('Request timeout!!!');
+      },
+      timeoputLimit: 5,
+    }
 
-    console.log(response);
-    return response;
+    this.fetcher = new JSONPGetter(options);
   }
 }
 
