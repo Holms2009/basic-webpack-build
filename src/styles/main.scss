@@ -9,18 +9,44 @@ html {
 }
 
 body {
-  height         : 100%;
-  display        : flex;
-  justify-content: center;
-  align-items    : center;
+  height : 100%;
+  padding: 30px;
 
   .city-picker {
-    padding      : 30px;
-    border       : 1px solid black;
-    border-radius: 10px;
+    position: relative;
 
     &__selector {
-      padding: 5px 10px;
+      padding      : 5px 10px;
+      Width        : 300px;
+      border       : 1px solid black;
+      border-radius: 5px;
+    }
+
+    &__tip {
+      padding : 10px 0;
+      display : none;
+      border  : 1px solid grey;
+      position: absolute;
+      top     : calc(100% + 2px);
+      left    : 0;
+    }
+
+    &__list {
+      list-style    : none;
+      display       : flex;
+      flex-direction: column;
+      row-gap       : 5px;
+      min-width     : 200px;
+    }
+
+    &__item {
+      padding   : 0 5px;
+      cursor    : pointer;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background-color: lightcyan;
+      }
     }
   }
 }
