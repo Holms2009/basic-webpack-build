@@ -80,16 +80,4 @@ class CityPicker {
 
 new CityPicker();
 
-console.log(rec({
-  abc: 'ttt',
-  def: 'sss',
-  hij: {
-    abc: ['aaa', 'bbb', 'ccc'],
-    def: {
-      abc: 'ttt',
-      def: 'sss',
-      hij: 'mmm'
-    },
-    hij: 'mmm'
-  }
-}));
+window.recursive = rec;
