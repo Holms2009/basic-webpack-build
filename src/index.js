@@ -1,67 +1,51 @@
+import Fetcher from './utils/jsongetter';
+
 import './styles/main.scss';
-
-class JSONPGetter {
-  constructor(options) {
-    this.onLoad = options.onLoad || function (data) { console.log(data) };
-    this.onError = options.onError || function (err) { console.log(err) };
-    this.timeoutLimit = options.timeoutLimit || 5;
-    this.callbackName = options.callbackName || 'callback';
-    this.activeScript = null;
-    this.activeTimeout = null;
-  }
-
-  #createNewRequest(request) {
-    this.activeScript = document.createElement('script');
-
-    this.activeScript.type = 'text/javascript';
-    this.activeScript.async = true;
-    this.activeScript.src = request;
-    document.head.appendChild(this.activeScript);
-  }
-
-  #requestTimeoutHandler() {
-    this.activeTimeout = setTimeout(() => {
-      window[this.callbackName || 'callback'] = function () { };
-      this.onError()
-    }, this.timeoutLimit * 1000);
-  }
-
-  sendRequest(body) {
-    this.#requestTimeoutHandler();
-
-    window[this.callbackName || 'callback'] = (data) => {
-      clearTimeout(this.activeTimeout);
-      this.onLoad(data);
-    };
-
-    this.#createNewRequest(body);
-  }
-}
-
 class CityPicker {
   constructor() {
     this.inputField = document.getElementById('city-input');
+    this.fetcher = null;
     this.state = {
       fieldValue: '',
-      citiesList: [],
+      citiesList: new Set(),
+    };
+    this.handlers = {
+      inputHandler: this.#onInputHandler.bind(this)
     };
 
     this.#createFetcher();
+    this.inputField.addEventListener('input', this.handlers.inputHandler);
   }
 
   #createFetcher() {
     const options = {
-      onLoad: function (data) {
-        console.log(data);
+      onLoad: (data) => {
+        this.state.citiesList = new Set();
+
+        data.result.forEach((item) => {
+          if (item.id !== 'Free') this.state.citiesList.add(item.name);
+        })
+
+        console.log(this.state.citiesList);
       },
       onError: function () {
         console.log('Request timeout!!!');
       },
       timeoputLimit: 5,
+      callbackName: 'fetcherCallback'
     }
 
-    this.fetcher = new JSONPGetter(options);
+    this.fetcher = new Fetcher(options);
+  }
+
+  #onInputHandler(evt) {
+    this.state.fieldValue = evt.currentTarget.value;
+    this.inputField.value = this.state.fieldValue;
+
+    if (this.state.fieldValue.length > 2) this.fetcher.sendRequest(
+      `https://kladr-api.ru/api.php?query=${this.state.fieldValue}&contentType=city&withParent=1&limit=10`
+    );
   }
 }
 
-window.pickerInstance = new CityPicker();
+new CityPicker();
