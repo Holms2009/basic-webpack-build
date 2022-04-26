@@ -1,4 +1,5 @@
 import Fetcher from './utils/jsonpgetter';
+import rec from './utils/recursion';
 
 import './styles/main.scss';
 class CityPicker {
@@ -78,3 +79,5 @@ class CityPicker {
 }
 
 new CityPicker();
+
+window.recursive = rec;
