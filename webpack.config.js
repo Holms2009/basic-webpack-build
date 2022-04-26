@@ -19,7 +19,7 @@ module.exports = (env, argv) => {
     },
     output: {
       path: path.resolve(__dirname, './dist'),
-      filename: '[name].js',
+      filename: 'index.js',
     },
     plugins: [
       new HtmlWebpackPlugin({

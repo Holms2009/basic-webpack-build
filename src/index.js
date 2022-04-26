@@ -1,4 +1,4 @@
-import Fetcher from './utils/jsongetter';
+import Fetcher from './utils/jsonpgetter';
 
 import './styles/main.scss';
 class CityPicker {
@@ -73,6 +73,7 @@ class CityPicker {
   #pickCityOnClick(evt) {
     this.state.fieldValue = this.inputField.value = this.pickedCity = evt.currentTarget.textContent;
     this.#updateTip();
+    this.inputField.focus();
   }
 }
 
