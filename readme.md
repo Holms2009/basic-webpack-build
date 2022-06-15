@@ -5,6 +5,7 @@
   - PostCSS;
   - Webpack 5;
   - Yarn;
+  - Babel;
 
 ### Основные команды:
   - Установка зависимостей: `yarn install`;
